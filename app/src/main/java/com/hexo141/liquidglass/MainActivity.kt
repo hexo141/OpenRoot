@@ -43,6 +43,7 @@ import com.hexo141.liquidglass.ui.AppScaffold
 import com.hexo141.liquidglass.ui.PairingScreen
 import com.hexo141.liquidglass.ui.ExploitChoice
 import com.hexo141.liquidglass.ui.SupportState
+import com.hexo141.liquidglass.ui.VivoWiredScreen
 import kotlin.math.roundToInt
 
 class MainActivity : AppCompatActivity() {
@@ -112,7 +113,7 @@ class MainActivity : AppCompatActivity() {
     /** Whether the vulnerability picker is shown. */
     private val pickerVisible = mutableStateOf(false)
 
-    /** Active bottom-bar tab: 0 home, 1 exploit log, 2 about. */
+    /** Active bottom-bar tab: 0 home, 1 exploit log, 2 about, 3 vivo/iQOO OTG. */
     private val selectedTab = mutableStateOf(0)
 
     /** Vulnerabilities offered for the connected device. */
@@ -249,6 +250,9 @@ class MainActivity : AppCompatActivity() {
                         },
                         about = { backdrop ->
                             AboutScreen(backdrop = backdrop)
+                        },
+                        vivo = { backdrop ->
+                            VivoWiredScreen(backdrop = backdrop)
                         },
                     )
                 },

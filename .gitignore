@@ -41,4 +41,9 @@ google-services.json
 /native-or/splicehelper
 /native-gpu/**/*.o
 /native-pct/**/*.o
-/app/src/main/jniLibs/**/*.so
+/app/src/main/jniLibs/arm64-v8a/libghostlock.so
+/app/src/main/jniLibs/arm64-v8a/libopenroot.so
+/app/src/main/jniLibs/arm64-v8a/libopenbootstrap.so
+/app/src/main/jniLibs/arm64-v8a/libcheese-quest.so
+/app/src/main/jniLibs/arm64-v8a/libcheese-snapdragon.so
+/app/src/main/jniLibs/arm64-v8a/libpct-opace6.so

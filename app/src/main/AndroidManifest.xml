@@ -2,6 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- OTG host mode: OpenRoot drives the target vivo/iQOO adbd over USB. Optional because the
+         rest of the app (wireless pairing to this device) does not need it. -->
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
+
     <!-- mDNS discovery of the local adb pairing service (NsdManager needs INTERNET and
          ACCESS_NETWORK_STATE) -->
     <uses-permission android:name="android.permission.INTERNET" />

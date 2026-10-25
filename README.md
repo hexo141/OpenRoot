@@ -1,5 +1,5 @@
 # OpenRoot
-
+![](https://i.imgs.ovh/2026/10/25/292fd26f3d676ca825fd439e2da0f1b5.png)
 OpenRoot is an Android app that talks to the device's own ADB daemon over wireless debugging. It
 pairs once, remembers the key, reconnects without a pairing code, shows what the device actually is,
 and can run a bundled payload that grants temporary root on supported kernels.

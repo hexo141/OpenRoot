@@ -4,7 +4,6 @@ This project is GPL-3.0 (see `LICENSE`). The third-party code below is vendored 
 source tree; copyright stays with the original authors, and the licences and sources are listed here.
 
 ## ADB pairing stack
-
 | Source | Path | Version | Licence |
 | --- | --- | --- | --- |
 | [MuntashirAkon/libadb-android](https://github.com/MuntashirAkon/libadb-android) | `app/src/main/java/com/hexo141/liquidglass/adb/**` | 3.1.1 | `GPL-3.0-or-later OR Apache-2.0` (used here under Apache-2.0) |
@@ -25,6 +24,25 @@ Files that were vendored:
 Local changes: only the package name was rewritten from `io.github.muntashirakon.{adb,crypto}` to
 `com.hexo141.liquidglass.{adb,crypto}`; the socket-side Java implementation is untouched. No native
 code is involved, so no NDK is required for it.
+
+## vivo/iQOO USB-OTG flow
+
+| Source | Path | Licence |
+| --- | --- | --- |
+| `yuehong-privilege-assistant` (user-provided source archive) | `app/src/main/java/com/hexo141/liquidglass/adb/UsbAdbClient.kt`, `AdbMessage.kt`, `app/src/main/assets/vivo_ksu_activate.sh` | MPL-2.0 |
+| [KSuRoot](https://github.com/hmascs/KSuRoot/) and the per-device ports listed in `app/src/main/assets/vivo_payloads.json` | `app/src/main/jniLibs/arm64-v8a/libksu_vivo_*.so` and the other payloads named in that catalog | Apache-2.0 / per-payload source |
+
+The USB host ADB transport, the wired escalation sequence and the KernelSU activation script are
+ported from the user-provided `yuehong-privilege-assistant` project (MPL-2.0). Local changes: the
+package was rewritten, the reference `AdbKey` was replaced with an adapter over this project's
+existing `AdbKeyManager` / `AndroidPubkey`, the staging file names use `openroot`, and the UI is
+new. The MPL-2.0 and Apache-2.0 texts are kept in `app/src/main/assets/licenses/`.
+
+The payload binaries are redistributed as prebuilt artifacts, not rebuilt from source here. Each
+entry in `vivo_payloads.json` carries its original source identifier and SHA-256 digest; the
+catalog verifies the digest before a payload is pushed. See the original project's `NOTICE.md` and
+the linked upstream repositories for authorship. Only use this flow on hardware you own or are
+authorised to test.
 
 ## Liquid Glass button
 

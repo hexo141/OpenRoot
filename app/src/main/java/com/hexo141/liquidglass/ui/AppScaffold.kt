@@ -57,6 +57,7 @@ fun AppScaffold(
     home: @Composable (Backdrop) -> Unit,
     log: @Composable (Backdrop) -> Unit,
     about: @Composable (Backdrop) -> Unit,
+    vivo: @Composable (Backdrop) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backdrop = rememberLayerBackdrop()
@@ -88,10 +89,11 @@ fun AppScaffold(
                 .fillMaxSize()
                 .graphicsLayer { alpha = contentAlpha.value }
         ) {
-            when (selectedTab) {
-                0 -> home(backdrop)
-                1 -> log(backdrop)
-                else -> about(backdrop)
+            when {
+                selectedTab == 0 -> home(backdrop)
+                selectedTab == 1 -> log(backdrop)
+                selectedTab == 2 -> about(backdrop)
+                else -> vivo(backdrop)
             }
         }
 
@@ -99,7 +101,7 @@ fun AppScaffold(
             selectedTab = selectedTab,
             onTabSelected = onTabSelected,
             backdrop = backdrop,
-            tabsCount = 3,
+            tabsCount = 4,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .windowInsetsPadding(WindowInsets.navigationBars)
@@ -117,6 +119,10 @@ fun AppScaffold(
                 TabIcon(TabIconKind.About)
                 TabLabel(R.string.tab_about)
             }
+            GlassBottomTab({ onTabSelected(3) }) {
+                TabIcon(TabIconKind.Vivo)
+                TabLabel(R.string.tab_vivo)
+            }
         }
     }
 }
@@ -133,7 +139,7 @@ private fun TabLabel(text: Int) {
     )
 }
 
-private enum class TabIconKind { Home, Log, About }
+private enum class TabIconKind { Home, Log, About, Vivo }
 
 /** Small line icons, drawn here so the app needs no icon dependency. */
 @Composable
@@ -185,6 +191,38 @@ private fun TabIcon(kind: TabIconKind) {
                         end = Offset(12f, 16.4f),
                         strokeWidth = 1.9f,
                         cap = StrokeCap.Round
+                    )
+                }
+                TabIconKind.Vivo -> {
+                    // USB trident: the OTG cable that reaches the second phone.
+                    drawLine(
+                        color = color,
+                        start = Offset(12f, 20f),
+                        end = Offset(12f, 4.5f),
+                        strokeWidth = 1.9f,
+                        cap = StrokeCap.Round
+                    )
+                    drawLine(
+                        color = color,
+                        start = Offset(12f, 11f),
+                        end = Offset(6.5f, 7.5f),
+                        strokeWidth = 1.9f,
+                        cap = StrokeCap.Round
+                    )
+                    drawLine(
+                        color = color,
+                        start = Offset(12f, 15f),
+                        end = Offset(17.5f, 11.5f),
+                        strokeWidth = 1.9f,
+                        cap = StrokeCap.Round
+                    )
+                    drawCircle(color = color, radius = 1.7f, center = Offset(12f, 3.8f))
+                    drawCircle(color = color, radius = 1.4f, center = Offset(5.6f, 6.9f))
+                    drawRoundRect(
+                        color = color,
+                        topLeft = Offset(16.1f, 9.7f),
+                        size = Size(2.8f, 2.8f),
+                        cornerRadius = CornerRadius(0.5f)
                     )
                 }
             }
