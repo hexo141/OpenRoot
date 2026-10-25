@@ -1,0 +1,543 @@
+{
+  "schema": "openroot-vivo-payloads/1",
+  "source": "Vivo/iQOO bundled privilege payloads from yuehong-privilege-assistant (KSuRoot lineage)",
+  "payloads": [
+    {
+      "library": "libksu_vivo_neon10pp_6657_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo10 Pro+",
+      "models": [
+        "iqoo neo10 pro+"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "c22d23d363b7158c4bde38449aef7670a69e70b9c0d131c51236d8cd3bf1309f",
+      "size": 147104,
+      "source": "vivo/iQOO neo10 Pro+/6.6.57-…-ga7861f9f1a53-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_neon10pp_6657_b.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo10 Pro+",
+      "models": [
+        "iqoo neo10 pro+"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "088d8c3c518a73cac30f0bd0b845bfbade8b180fab2b3b30ea63c5f35c9c1f64",
+      "size": 147104,
+      "source": "vivo/iQOO neo10 Pro+/6.6.57-…-gda7e4eafe109-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_neon10pp_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo10 Pro+",
+      "models": [
+        "iqoo neo10 pro+"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "7b9ff7e820c3b741d46b4c2c1c8c11e0a1654cc3f07388dd44956d8076cc1eb6",
+      "size": 147104,
+      "source": "vivo/iQOO neo10 Pro+/6.6.89-…-g1f71897ac249-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_iqoo13_6630_b.so",
+      "vendor": "vivo",
+      "displayName": "iQOO 13",
+      "models": [
+        "iqoo 13"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "3874b28e1fff36f9adf219291a6a4303ae42a1624246bfcf4ccd11868409a644",
+      "size": 147104,
+      "source": "vivo/IQOO 13/6.6.30-…-gddea8124c6fe-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_iqoo13_6630_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO 13",
+      "models": [
+        "iqoo 13"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "f58eca3124ab0a34c1e14607041bd87959c5cb7f412670b0de413a13965d1dd3",
+      "size": 147104,
+      "source": "vivo/IQOO 13/6.6.30-…-g24ffe62b0a0e-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_iqoo13_6657_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO 13",
+      "models": [
+        "iqoo 13"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "aa6d442f737bfc77b1305d235696ad964244154d1ea0c6aed8a6152ad2df6ea6",
+      "size": 147104,
+      "source": "vivo/IQOO 13/6.6.57-…-gda7e4eafe109-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_iqoo13_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO 13",
+      "models": [
+        "iqoo 13"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "135080801e86f9e117f1bdcd946715ed93350feee5cef33b9da362787e0ba825",
+      "size": 147104,
+      "source": "vivo/IQOO 13/6.6.89-…-g1f71897ac249-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_neon11_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo11",
+      "models": [
+        "iqoo neo11",
+        "iqoo 11"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "4deb01e21d1c8bdd3d4991f738ec6f16590ec30d2a724f487736da5540eee027",
+      "size": 147104,
+      "source": "vivo/IQOO Neo11/6.6.89-…-g1f71897ac249-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_iqoo13neo11x200u_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO 13 / iQOO Neo11 / vivo X200 Ultra",
+      "models": [],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> <su>",
+      "sha256": "9033f24d366d78e2ea6a19d8e38a2c8c086dc174afd2c14af1d1efaa1db566de",
+      "size": 157784,
+      "source": "vivo/IQOO13、iQOOneo11，X200U/6.6.89-…/iQOO13 neo11.so"
+    },
+    {
+      "library": "libksu_vivo_neon10p_6630_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo10 Pro",
+      "models": [
+        "iqoo neo10 pro"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "89dc451f03ad08fa5b2173b62e350d3c4612a32e19ffefb805c86d1b24809e93",
+      "size": 147048,
+      "source": "vivo/IQOO Neo10 Pro/6.6.30-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_neon10p_6657_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo10 Pro",
+      "models": [
+        "iqoo neo10 pro"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "5b57e8924e88fd464d2ec2e154fa735315467664aefa21305e8755f8710cb8ab",
+      "size": 147048,
+      "source": "vivo/IQOO Neo10 Pro/6.6.57-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_neon10p_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo10 Pro",
+      "models": [
+        "iqoo neo10 pro"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "9feb0d6fddeb4307c69b3939619232c3049ea21e5a145605f19a6768e01c9a17",
+      "size": 147048,
+      "source": "vivo/IQOO Neo10 Pro/6.6.89-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_z10tp_6657_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Z10 Turbo+ / vivo X200 / X200 Pro mini / X200 Pro / X200S / iQOO Neo10 Pro",
+      "models": [
+        "iqoo z10 turbo+"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "c0474820eb0bef03fb2a086b1b4dec99c8015f0f03a85eaf399ef52decb563e5",
+      "size": 156824,
+      "source": "vivo/iQOO Z10 Turbo+/6.6.57-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_z10tp_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Z10 Turbo+",
+      "models": [
+        "iqoo z10 turbo+"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "c0cf336d657e6102e176ee8ffcb823b020492312f7e657e9f4d57d166edbb6ac",
+      "size": 157672,
+      "source": "vivo/iQOO Z10 Turbo+/6.6.89-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6630_d.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "8007714786c75909d836e10e708a62095288122b183e29239baeefca1dc4b42c",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.30-…-gdf2db89bad22-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6630_c.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "928fdc5fa53db89e6b5698b3ad2bd1582db9c57d229a89387935ce464579a650",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.30-…-g4063ff378d59-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6630_b.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "27da87c0f9714ec67403e836a961d90722528e48787e6d606919d024c5f1cdb0",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.30-…-g3c00ef68de5b-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6630_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "0ba832d0c5e13d2ae2cdf71ee6607b5762684391cdbd90b2e74e7534e9a5d4ea",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.30-…-g24ffe62b0a0e-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6657_c.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "91c3080e6cf329896e639321add256749cd6be7d23cf36a7434fd7fdb1f10d53",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.57-…-ge9c3d7352454-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6657_b.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "ba5b2da4532c52896f6a943ac73cc72d5fbfcb0a19d3c4ae53ca0c0939be3e24",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.57-…-g5552931da54f-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6657_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "1701f91770c81cd8b7bc555b48c442e2e0d9ba4f73d4009e639b0431df5a2488",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.57-…-g0d2377693855-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6689_b.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "a97b62da740c3af0cce103a11d51ef90be602ec23fc9f721fe834777a1c0041e",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.89-…-gb57af212129c-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200",
+      "models": [
+        "vivo x200"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "e1bd0dbd1dd2ef65f7ac0c27d12b6dc9668982ea2e17f2d76dcd1c5f2f5545e6",
+      "size": 147048,
+      "source": "vivo/VIVO X200/6.6.89-…-g177325e1c8c7-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200s_6630_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200S",
+      "models": [
+        "vivo x200s"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "787389ba729c099c04a9cdf2eac835d1ccaebbab7169da6b6edd1ca481cd6256",
+      "size": 147112,
+      "source": "vivo/VIVO X200S/6.6.30-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200s_6657_c.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200S",
+      "models": [
+        "vivo x200s"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "d304c6615a4c1fb79dab7bec7c0cfdee6c06672f5cf000f8f75ee7aa39f1d0ad",
+      "size": 147112,
+      "source": "vivo/VIVO X200S/6.6.57-…-ge9c3d7352454-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200s_6657_b.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200S",
+      "models": [
+        "vivo x200s"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "dc2fa3d821ecaf083926fce4589130c4f5ec92438c43af85d923ca496640e24a",
+      "size": 147048,
+      "source": "vivo/VIVO X200S/6.6.57-…-g5552931da54f-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200s_6657_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200S",
+      "models": [
+        "vivo x200s"
+      ],
+      "kernelVersion": "6.6.57",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "459afb5d5930d7d8d7c31a450c1c0c03a2e83f578f7581a68ee29750d6e5e254",
+      "size": 147048,
+      "source": "vivo/VIVO X200S/6.6.57-…-g0d2377693855-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200s_6689_b.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200S",
+      "models": [
+        "vivo x200s"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "ab1bcce345dfa1b04131bcf00ca0d58f2729afd43de3e8d643c42e58010227c1",
+      "size": 147112,
+      "source": "vivo/VIVO X200S/6.6.89-…-gb57af212129c-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_x200s_6689_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo X200S",
+      "models": [
+        "vivo x200s"
+      ],
+      "kernelVersion": "6.6.89",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "02442049ad1ddc9ae2797a965533bbf9503ce186f8092f6ac6c8af980940d960",
+      "size": 147048,
+      "source": "vivo/VIVO X200S/6.6.89-…-g177325e1c8c7-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_pad5pro_66127_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo Pad5 Pro",
+      "models": [
+        "vivo pad5 pro"
+      ],
+      "kernelVersion": "6.6.127",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "7c7c91ab74ebab865ceb698b0526118ef9f864b3f0e3a88ff259230d021fcd1a",
+      "size": 147048,
+      "source": "vivo/VIVO Pad5 Pro/6.6.127-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_pad5pro_6630_a.so",
+      "vendor": "vivo",
+      "displayName": "vivo Pad5 Pro",
+      "models": [
+        "vivo pad5 pro"
+      ],
+      "kernelVersion": "6.6.30",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "b36a91392f89370dd77e77e22bac51a49d8632e693b6f57e0f78619a1937828b",
+      "size": 147048,
+      "source": "vivo/VIVO Pad5 Pro/6.6.30-…/preload.so"
+    },
+    {
+      "library": "libksu_vivo_iqoo12_a15.so",
+      "vendor": "vivo",
+      "displayName": "iQOO 12（Android 15）",
+      "models": [
+        "iqoo 12"
+      ],
+      "kernelVersion": null,
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> sh",
+      "sha256": "6b4e788cdcb0b8c4c8607589d6f820a0b32657687dc4386127177af1f734255c",
+      "size": 154240,
+      "source": "vivo/iqoo12 A15/iQOO12.so"
+    },
+    {
+      "library": "libksu_vivo_rootmyvivoexploit_any_5b30.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo11（PD2520）",
+      "models": [
+        "pd2520"
+      ],
+      "kernelVersion": null,
+      "kernelUnknown": true,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "5b307d0263a07df2929561908d8fe14c5f5a6632edcfc7766fc3e3be5d9192d7",
+      "size": 144720,
+      "source": "zenyxx-xd/RootMyVivo-Exploit :: afunix/build_64560/preload_64560.so"
+    },
+    {
+      "library": "libksu_other_neo8ghostlockadaptation_k61115-android14_7ec9.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Neo8",
+      "models": [
+        "iqoo neo8"
+      ],
+      "kernelVersion": "6.1.115",
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "7ec9d4550ce8ab938797b677d09de1982c2587ca497d9e351dde47c6acc91d47",
+      "size": 91056,
+      "source": "MKE84/neo8-ghostlock-adaptation :: bin/preload.so"
+    },
+    {
+      "library": "libksu_vivo_iqooz95gvivot35grootghos_any_3cc6.so",
+      "vendor": "vivo",
+      "displayName": "iQOO Z9 5G",
+      "models": [
+        "iqoo z9 5g"
+      ],
+      "kernelVersion": null,
+      "kernelUnknown": true,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "3cc696d82fb65a571c61b41fcf79a795529e7059c555618b7a530195c2aa75f1",
+      "size": 136584,
+      "source": "ankitrawatgit/iQOO-Z9_5G-vivo-T3_5G-Root-GhostLock :: payload/build/cve-2026-43499-app.so"
+    },
+    {
+      "library": "libbs.so",
+      "vendor": "vivo",
+      "displayName": "内置 all-in-one 库（libbs.so）",
+      "models": [],
+      "kernelVersion": null,
+      "kernelUnknown": false,
+      "buildId": "",
+      "command": "LD_PRELOAD=<payload> /system/bin/id",
+      "sha256": "8c3410cbc7dce25df3274c0e35d293cb38d7ad2384af7ecc549a3400c50695d9",
+      "size": 176544,
+      "source": "内置提权文件清单"
+    }
+  ]
+}
