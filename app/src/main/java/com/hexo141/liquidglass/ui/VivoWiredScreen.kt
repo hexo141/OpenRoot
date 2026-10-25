@@ -28,12 +28,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,9 +40,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.isSpecified
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -54,6 +50,7 @@ import com.hexo141.liquidglass.vivo.VivoStage
 import com.hexo141.liquidglass.vivo.VivoTarget
 import com.hexo141.liquidglass.vivo.VivoUiState
 import com.hexo141.liquidglass.vivo.VivoWiredController
+import com.hexo141.liquidglass.vivo.progressFraction
 import com.kyant.backdrop.Backdrop
 import com.kyant.backdrop.drawBackdrop
 import com.kyant.backdrop.effects.blur
@@ -64,12 +61,13 @@ import com.kyant.shapes.RoundedRectangle
 /**
  * USB-OTG host page for a second vivo/iQOO phone.
  *
- * The page owns a [VivoWiredController] for its lifetime: the USB permission receiver, the live
- * adbd transport and the flow all go away when the page is closed.
+ * The [VivoWiredController] is owned by the activity, so switching to the log tab does not stop a
+ * running flow; the page only renders the controller state.
  */
 @Composable
 fun VivoWiredScreen(
     backdrop: Backdrop,
+    controllerProvider: () -> VivoWiredController,
     modifier: Modifier = Modifier,
 ) {
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
@@ -94,9 +92,7 @@ fun VivoWiredScreen(
         return
     }
 
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    val controller = remember(context) { VivoWiredController(context, scope) }
+    val controller = remember { controllerProvider() }
     val surfaceColor =
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) Color.Black.copy(alpha = 0.3f)
         else Color.Unspecified
@@ -110,15 +106,12 @@ fun VivoWiredScreen(
         }
     }
 
-    DisposableEffect(controller) {
-        onDispose { controller.dispose() }
-    }
     LaunchedEffect(controller) {
         controller.connect()
     }
 
     val state = controller.state
-    val progress = state.stage.progress(state)
+    val progress = state.progressFraction()
 
     Box(modifier.fillMaxSize()) {
         Column(
@@ -134,7 +127,7 @@ fun VivoWiredScreen(
                 backdrop = backdrop,
                 state = state,
                 surfaceColor = surfaceColor,
-                onConnect = { controller.connect() },
+                onConnect = { controller.connect(force = state.connected) },
             )
             Spacer(Modifier.height(10.dp))
             PayloadCard(
@@ -176,13 +169,6 @@ fun VivoWiredScreen(
                     lineHeight = 15.sp,
                     shadow = vivoShadow,
                 )
-            )
-            Spacer(Modifier.height(12.dp))
-            LogCard(
-                backdrop = backdrop,
-                logs = state.logs,
-                surfaceColor = surfaceColor,
-                onClear = controller::clearLogs,
             )
         }
 
@@ -348,67 +334,6 @@ private fun buildPayloadDetail(payload: VivoPayload): String = buildString {
     }
     if (isNotEmpty()) append(" · ")
     append(payload.library)
-}
-
-@Composable
-private fun LogCard(
-    backdrop: Backdrop,
-    logs: List<String>,
-    surfaceColor: Color,
-    onClear: () -> Unit,
-) {
-    val scroll = rememberScrollState()
-    LaunchedEffect(logs.size) {
-        if (logs.isNotEmpty()) scroll.animateScrollTo(scroll.maxValue)
-    }
-    VivoGlassCard(backdrop, surfaceColor) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            CardTitle("Log")
-            Spacer(Modifier.weight(1f))
-            BasicText(
-                text = "Clear",
-                style = TextStyle(
-                    color = Color.White.copy(alpha = if (logs.isEmpty()) 0.3f else 0.7f),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Medium,
-                    shadow = vivoShadow,
-                ),
-                modifier = Modifier.clickable(enabled = logs.isNotEmpty(), onClick = onClear),
-            )
-        }
-        Spacer(Modifier.height(8.dp))
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(max = 240.dp)
-                .verticalScroll(scroll)
-        ) {
-            if (logs.isEmpty()) {
-                BasicText(
-                    text = "No output",
-                    style = TextStyle(
-                        color = Color.White.copy(alpha = 0.4f),
-                        fontSize = 10.5.sp,
-                        fontFamily = FontFamily.Monospace,
-                        shadow = vivoShadow,
-                    )
-                )
-            } else {
-                logs.forEach { line ->
-                    BasicText(
-                        text = line,
-                        style = TextStyle(
-                            color = Color.White.copy(alpha = 0.76f),
-                            fontSize = 10.sp,
-                            lineHeight = 14.sp,
-                            fontFamily = FontFamily.Monospace,
-                            shadow = vivoShadow,
-                        )
-                    )
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -685,21 +610,6 @@ private fun PillButton(text: String, enabled: Boolean, onClick: () -> Unit) {
     }
 }
 
-private fun VivoStage.progress(state: VivoUiState): Float = when (this) {
-    VivoStage.Idle -> 0f
-    VivoStage.Connecting -> 0.04f
-    VivoStage.ReadingTarget -> 0.08f
-    VivoStage.PushingPayload ->
-        0.15f + ((state.transferProgress ?: 0).coerceIn(0, 100) / 100f) * 0.25f
-    VivoStage.Rebooting -> 0.46f
-    VivoStage.Reconnecting -> 0.52f
-    VivoStage.WaitingForBoot -> 0.58f
-    VivoStage.ExecutingPayload -> 0.72f
-    VivoStage.CheckingRoot -> 0.82f
-    VivoStage.ActivatingKernelSu -> 0.9f
-    VivoStage.Done -> 1f
-    VivoStage.Failed -> 0f
-}
 
 private val vivoButtonText = TextStyle(
     color = Color.White,

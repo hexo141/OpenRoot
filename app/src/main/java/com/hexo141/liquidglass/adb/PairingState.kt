@@ -20,11 +20,27 @@ class PairingState(context: Context) {
             preferences.edit().putBoolean(KEY_PAIRED, value).apply()
         }
 
+    /**
+     * Marks a successful pairing and bumps [KEY_PAIRED_AT].
+     *
+     * The boolean alone does not notify listeners when it was already {@code true} (for example a
+     * retry after a failed direct connect), so the timestamp is the real "pairing succeeded" edge.
+     */
+    fun markPaired() {
+        preferences.edit()
+            .putBoolean(KEY_PAIRED, true)
+            .putLong(KEY_PAIRED_AT, System.currentTimeMillis())
+            .apply()
+    }
+
     companion object {
         /** Exposed so the activity can register a change listener on the same file. */
         const val PREF_NAME = "adb_pairing_state"
 
         /** Exposed so the activity can listen for changes made by the pairing service. */
         const val KEY_PAIRED = "paired"
+
+        /** Written on every successful pairing, even if [KEY_PAIRED] was already true. */
+        const val KEY_PAIRED_AT = "paired_at"
     }
 }

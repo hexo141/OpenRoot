@@ -81,10 +81,12 @@ class AdbPairingService : Service() {
             startService(context, intent)
         }
 
-        /** Stop listening for pairing requests. */
+        /** Stop listening for pairing requests. Safe to call when the service is not running. */
         fun stop(context: Context) {
-            val intent = Intent(context, AdbPairingService::class.java).setAction(ACTION_STOP)
-            startService(context, intent)
+            // stopService() never starts the service (unlike an ACTION_STOP startService call) and
+            // is a no-op when it is already gone. This avoids the foreground-service start/stop
+            // race that happens when "Stop" is tapped twice.
+            context.stopService(Intent(context, AdbPairingService::class.java))
         }
 
         /** Debug builds only: run a pairing attempt with an explicit code and port. */
@@ -130,6 +132,7 @@ class AdbPairingService : Service() {
     private var lastHost: String? = null
     private var lastPromptPort = -1
     private var pairing = false
+    private var stoppedAfterSuccess = false
 
     private val discoveredListener = AdbMdns.OnAdbDaemonDiscoveredListener { address, port ->
         Log.i(TAG, "pairing service port changed: $port (host=$address)")
@@ -214,6 +217,12 @@ class AdbPairingService : Service() {
     override fun onDestroy() {
         running = false
         stopDiscovery()
+        runCatching { NotificationManagerCompat.from(this).cancel(ID_FOREGROUND) }
+        // Keep the success notification visible; a manual stop should clear any stale result.
+        if (!stoppedAfterSuccess) {
+            runCatching { NotificationManagerCompat.from(this).cancel(ID_RESULT) }
+        }
+        runCatching { stopForegroundSafe() }
         super.onDestroy()
     }
 
@@ -265,9 +274,10 @@ class AdbPairingService : Service() {
             if (result == null) {
                 Log.i(TAG, "pair succeeded on port $port")
                 // adbd now trusts our key, so the main screen can connect without a code.
-                PairingState(this).isPaired = true
+                PairingState(this).markPaired()
                 mainHandler.post {
                     pairing = false
+                    stoppedAfterSuccess = true
                     notify(ID_RESULT, succeedNotification())
                     // adbd has taken the public key, so there is nothing left to listen for: drop
                     // the foreground notification and stop. The main screen hides the pairing

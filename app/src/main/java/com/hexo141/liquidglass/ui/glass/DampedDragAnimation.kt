@@ -12,11 +12,14 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.input.pointer.util.VelocityTracker
 import androidx.compose.ui.unit.IntSize
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import kotlin.math.abs
+import kotlinx.coroutines.launch
 
 class DampedDragAnimation(
     private val animationScope: CoroutineScope,
@@ -56,7 +59,13 @@ class DampedDragAnimation(
 
     private val mutatorMutex = MutatorMutex()
 
+    private companion object {
+        /** Upper bound for holding the pressed scale while a release snap settles. */
+        const val RELEASE_SETTLE_TIMEOUT_MS = 600L
+    }
+
     private val velocityTracker = VelocityTracker()
+    private var dragValueJob: Job? = null
 
     val value: Float get() = valueAnimation.value
     val progress: Float get() = (value - valueRange.start) / (valueRange.endInclusive - valueRange.start)
@@ -66,17 +75,24 @@ class DampedDragAnimation(
     val scaleY: Float get() = scaleYAnimation.value
     val velocity: Float get() = velocityAnimation.value
 
+    /** True while a finger owns the capsule; external tab changes must not snap it mid-drag. */
+    var isDragging: Boolean = false
+        private set
+
     val modifier: Modifier = Modifier.pointerInput(Unit) {
         inspectDragGestures(
             onDragStart = { down ->
+                isDragging = true
                 onDragStarted(down.position)
                 press()
             },
             onDragEnd = {
+                isDragging = false
                 onDragStopped()
                 release()
             },
             onDragCancel = {
+                isDragging = false
                 onDragStopped()
                 release()
             }
@@ -99,9 +115,13 @@ class DampedDragAnimation(
             awaitFrame()
             if (value != targetValue) {
                 val threshold = (valueRange.endInclusive - valueRange.start) * 0.025f
-                snapshotFlow { valueAnimation.value }
-                    .filter { abs(it - valueAnimation.targetValue) < threshold }
-                    .first()
+                // Wait for the snap to settle so the pressed glass keeps its original feel, but
+                // never leave it enlarged forever if a gesture ended without a target animation.
+                withTimeoutOrNull(RELEASE_SETTLE_TIMEOUT_MS) {
+                    snapshotFlow { valueAnimation.value }
+                        .filter { abs(it - valueAnimation.targetValue) < threshold }
+                        .first()
+                }
             }
             launch { pressProgressAnimation.animateTo(0f, pressProgressAnimationSpec) }
             launch { scaleXAnimation.animateTo(initialScale, scaleXAnimationSpec) }
@@ -111,8 +131,12 @@ class DampedDragAnimation(
 
     fun updateValue(value: Float) {
         val targetValue = value.coerceIn(valueRange)
-        animationScope.launch {
-            launch { valueAnimation.animateTo(targetValue, valueAnimationSpec) { updateVelocity() } }
+        // While the finger is down the capsule must track it 1:1. A spring here makes it trail
+        // behind fast drags; the animated snap is reserved for the release in onDragStopped.
+        dragValueJob?.cancel()
+        dragValueJob = animationScope.launch(start = CoroutineStart.UNDISPATCHED) {
+            valueAnimation.snapTo(targetValue)
+            updateVelocity()
         }
     }
 
@@ -121,7 +145,13 @@ class DampedDragAnimation(
      * glide across the bar instead of popping (no press, no scale, no spring overshoot).
      */
     fun slideToValue(value: Float) {
+        // During a drag the capsule stays wherever the finger put it; the only snap is the one
+        // triggered by onDragStopped after the finger is lifted or the gesture is cancelled.
+        if (isDragging) return
         val targetValue = value.coerceIn(valueRange)
+        // A release snap must win over an in-flight drag update, otherwise the capsule can stop
+        // between two tabs after a fast drag.
+        dragValueJob?.cancel()
         animationScope.launch {
             mutatorMutex.mutate {
                 valueAnimation.animateTo(targetValue, slideAnimationSpec)
@@ -130,6 +160,7 @@ class DampedDragAnimation(
     }
 
     fun animateToValue(value: Float) {
+        dragValueJob?.cancel()
         animationScope.launch {
             mutatorMutex.mutate {
                 press()

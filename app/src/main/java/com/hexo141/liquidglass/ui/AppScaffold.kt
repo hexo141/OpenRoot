@@ -91,9 +91,9 @@ fun AppScaffold(
         ) {
             when {
                 selectedTab == 0 -> home(backdrop)
-                selectedTab == 1 -> log(backdrop)
-                selectedTab == 2 -> about(backdrop)
-                else -> vivo(backdrop)
+                selectedTab == 1 -> vivo(backdrop)
+                selectedTab == 2 -> log(backdrop)
+                else -> about(backdrop)
             }
         }
 
@@ -112,16 +112,16 @@ fun AppScaffold(
                 TabLabel(R.string.tab_home)
             }
             GlassBottomTab({ onTabSelected(1) }) {
+                TabIcon(TabIconKind.Vivo)
+                TabLabel(R.string.tab_vivo)
+            }
+            GlassBottomTab({ onTabSelected(2) }) {
                 TabIcon(TabIconKind.Log)
                 TabLabel(R.string.tab_log)
             }
-            GlassBottomTab({ onTabSelected(2) }) {
+            GlassBottomTab({ onTabSelected(3) }) {
                 TabIcon(TabIconKind.About)
                 TabLabel(R.string.tab_about)
-            }
-            GlassBottomTab({ onTabSelected(3) }) {
-                TabIcon(TabIconKind.Vivo)
-                TabLabel(R.string.tab_vivo)
             }
         }
     }

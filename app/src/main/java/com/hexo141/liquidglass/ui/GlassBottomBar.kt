@@ -155,8 +155,12 @@ fun GlassBottomBar(
             snapshotFlow { currentIndex }
                 .drop(1)
                 .collectLatest { index ->
-                    dampedDragAnimation.slideToValue(index.toFloat())
-                    onTabSelected(index)
+                    // A finger is still holding the capsule: keep the free drag position and only
+                    // commit the nearest tab when the gesture ends.
+                    if (!dampedDragAnimation.isDragging) {
+                        dampedDragAnimation.slideToValue(index.toFloat())
+                        onTabSelected(index)
+                    }
                 }
         }
 

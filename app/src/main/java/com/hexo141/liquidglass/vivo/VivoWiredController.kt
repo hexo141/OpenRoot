@@ -45,7 +45,6 @@ data class VivoUiState(
     val running: Boolean = false,
     val stage: VivoStage = VivoStage.Idle,
     val transferProgress: Int? = null,
-    val logs: List<String> = emptyList(),
     val success: Boolean = false,
 )
 
@@ -59,6 +58,8 @@ data class VivoUiState(
 class VivoWiredController(
     context: Context,
     private val scope: CoroutineScope,
+    private val onLog: (String) -> Unit = {},
+    private val onStateChanged: (VivoUiState) -> Unit = {},
 ) {
     private val appContext = context.applicationContext
     private val usbManager = appContext.getSystemService(UsbManager::class.java)
@@ -110,8 +111,9 @@ class VivoWiredController(
     }
 
     /** Finds and connects the attached USB ADB target, then reads its model/kernel. */
-    fun connect() {
+    fun connect(force: Boolean = false) {
         if (state.running || state.connecting) return
+        if (!force && state.connected && session.client != null) return
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
             setStatus("USB host transport requires Android 8.0 or newer")
             return
@@ -285,10 +287,6 @@ class VivoWiredController(
             )
         }
         appendLog("Stopped by user")
-    }
-
-    fun clearLogs() {
-        updateState { it.copy(logs = emptyList()) }
     }
 
     fun dispose() {
@@ -486,18 +484,18 @@ class VivoWiredController(
     }
 
     private fun appendLog(message: String) {
-        val lines = message.lineSequence()
-            .filter(String::isNotBlank)
-            .toList()
-        if (lines.isEmpty()) return
-        updateState { it.copy(logs = (it.logs + lines).takeLast(MAX_LOG_LINES)) }
+        message.lineSequence().filter(String::isNotBlank).forEach(onLog)
     }
 
     private fun updateState(block: (VivoUiState) -> VivoUiState) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
             state = block(state)
+            onStateChanged(state)
         } else {
-            mainHandler.post { state = block(state) }
+            mainHandler.post {
+                state = block(state)
+                onStateChanged(state)
+            }
         }
     }
 
@@ -510,7 +508,23 @@ class VivoWiredController(
         const val INITIAL_CONNECT_TIMEOUT_MS = 120_000L
         const val RECONNECT_TIMEOUT_MS = 240_000L
         const val MAX_LOCAL_PAYLOAD_BYTES = 512L * 1024L * 1024L
-        const val MAX_LOG_LINES = 800
         val GETPROP_LINE = Regex("^\\[([^]]+)]\\s*:\\s*\\[(.*)]$")
     }
+}
+
+/** Fraction used by the shared exploit-log progress bar. */
+fun VivoUiState.progressFraction(): Float = when (stage) {
+    VivoStage.Idle -> 0f
+    VivoStage.Connecting -> 0.04f
+    VivoStage.ReadingTarget -> 0.08f
+    VivoStage.PushingPayload ->
+        0.15f + ((transferProgress ?: 0).coerceIn(0, 100) / 100f) * 0.25f
+    VivoStage.Rebooting -> 0.46f
+    VivoStage.Reconnecting -> 0.52f
+    VivoStage.WaitingForBoot -> 0.58f
+    VivoStage.ExecutingPayload -> 0.72f
+    VivoStage.CheckingRoot -> 0.82f
+    VivoStage.ActivatingKernelSu -> 0.9f
+    VivoStage.Done -> 1f
+    VivoStage.Failed -> 0f
 }

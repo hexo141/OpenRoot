@@ -44,7 +44,13 @@ import com.hexo141.liquidglass.ui.PairingScreen
 import com.hexo141.liquidglass.ui.ExploitChoice
 import com.hexo141.liquidglass.ui.SupportState
 import com.hexo141.liquidglass.ui.VivoWiredScreen
+import com.hexo141.liquidglass.vivo.VivoWiredController
+import com.hexo141.liquidglass.vivo.progressFraction
 import kotlin.math.roundToInt
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,6 +65,9 @@ class MainActivity : AppCompatActivity() {
 
         /** How long to wait for `_adb-tls-connect._tcp` before giving up on a direct connect. */
         const val CONNECT_TIMEOUT_MS = 6_000L
+
+        /** Give adbd a moment to publish the connect service after the pairing handshake. */
+        const val CONNECT_AFTER_PAIR_DELAY_MS = 700L
 
         /**
          * Reference width of the layout in dp. Bigger number = smaller UI (more dp per screen):
@@ -113,7 +122,7 @@ class MainActivity : AppCompatActivity() {
     /** Whether the vulnerability picker is shown. */
     private val pickerVisible = mutableStateOf(false)
 
-    /** Active bottom-bar tab: 0 home, 1 exploit log, 2 about, 3 vivo/iQOO OTG. */
+    /** Active bottom-bar tab: 0 home, 1 vivo/iQOO OTG, 2 exploit log, 3 about. */
     private val selectedTab = mutableStateOf(0)
 
     /** Vulnerabilities offered for the connected device. */
@@ -130,6 +139,10 @@ class MainActivity : AppCompatActivity() {
 
     private val refreshHandler = Handler(Looper.getMainLooper())
 
+    /** Activity-scoped so a running vivo flow survives tab switches; released in onDestroy. */
+    private val vivoScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var vivoController: VivoWiredController? = null
+
     /** While pairing runs in the background, align the state once a second. */
     private val refreshTick = object : Runnable {
         override fun run() {
@@ -138,20 +151,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /** After a successful pair, connect once without asking for another code. */
+    private val pairingConnect = Runnable {
+        if (paired.value && !connected.value && !connecting.value) {
+            connect(silent = false)
+        }
+    }
+
     private val requestNotificationPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) startPairing() else toast(R.string.adb_pairing_permission_needed)
         }
 
-    /** Hide the pairing button as soon as the service writes isPaired = true. */
+    /** Pairing succeeded: refresh the screen and connect without a code. */
     private val pairingStateListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-            if (key == PairingState.KEY_PAIRED) {
-                val isPaired = PairingState(this).isPaired
-                paired.value = isPaired
-                if (isPaired) needsPairing.value = false
-                // The service stops after a successful pairing: align now, do not wait for the tick.
-                pairingRunning.value = AdbPairingService.isRunning()
+            if (key == PairingState.KEY_PAIRED || key == PairingState.KEY_PAIRED_AT) {
+                runOnUiThread {
+                    refreshState(pairingSucceeded = key == PairingState.KEY_PAIRED_AT)
+                }
             }
         }
 
@@ -234,7 +252,7 @@ class MainActivity : AppCompatActivity() {
                                 onExploit = ::openEnginePicker,
                                 onPickEngine = ::startExploit,
                                 onDismissPicker = { pickerVisible.value = false },
-                                onOpenLog = { selectedTab.value = 1 },
+                                onOpenLog = { selectedTab.value = 2 },
                             )
                         },
                         log = { backdrop ->
@@ -243,7 +261,8 @@ class MainActivity : AppCompatActivity() {
                                 status = exploitStatus.value,
                                 progress = exploitProgress.value,
                                 commandMode = commandMode.value,
-                                running = exploiting.value,
+                                running = exploiting.value ||
+                                    (vivoController?.state?.running == true),
                                 onCommand = ::runRootCommand,
                                 backdrop = backdrop,
                             )
@@ -252,7 +271,10 @@ class MainActivity : AppCompatActivity() {
                             AboutScreen(backdrop = backdrop)
                         },
                         vivo = { backdrop ->
-                            VivoWiredScreen(backdrop = backdrop)
+                            VivoWiredScreen(
+                                backdrop = backdrop,
+                                controllerProvider = ::ensureVivoController,
+                            )
                         },
                     )
                 },
@@ -279,10 +301,12 @@ class MainActivity : AppCompatActivity() {
 
     /** State sync while the main screen lives: one tick a second, instant pairing updates, one auto-connect. */
     private fun beginLiveUpdates() {
+        // Reset before refreshState(): a pairing success detected there schedules the delayed
+        // direct connect and marks the auto-connect as handled, so it is not attempted twice.
+        autoConnectTried = false
         refreshState()
         getSharedPreferences(PairingState.PREF_NAME, MODE_PRIVATE)
             .registerOnSharedPreferenceChangeListener(pairingStateListener)
-        autoConnectTried = false
         maybeAutoConnect()
         refreshHandler.removeCallbacks(refreshTick)
         refreshHandler.postDelayed(refreshTick, 1000)
@@ -302,15 +326,55 @@ class MainActivity : AppCompatActivity() {
         super.onPause()
     }
 
-    private fun refreshState() {
-        pairingRunning.value = AdbPairingService.isRunning()
-        paired.value = PairingState(this).isPaired
-        connected.value = AdbConnectionManager.isConnected()
-        if (!connected.value) {
+    override fun onDestroy() {
+        vivoController?.dispose()
+        vivoController = null
+        vivoScope.cancel()
+        refreshHandler.removeCallbacksAndMessages(null)
+        super.onDestroy()
+    }
+
+    private fun ensureVivoController(): VivoWiredController {
+        vivoController?.let { return it }
+        val controller = VivoWiredController(
+            context = this,
+            scope = vivoScope,
+            onLog = { line -> logLine("[vivo] $line") },
+            onStateChanged = { state ->
+                exploitStatus.value = state.status
+                exploitProgress.value = state.progressFraction()
+                if (state.running) commandMode.value = false
+            },
+        )
+        vivoController = controller
+        return controller
+    }
+
+    private fun refreshState(
+        updatePairing: Boolean = true,
+        pairingSucceeded: Boolean = false,
+    ) {
+        if (updatePairing) pairingRunning.value = AdbPairingService.isRunning()
+        val wasPaired = paired.value
+        val isPaired = PairingState(this).isPaired
+        paired.value = isPaired
+        val isConnected = AdbConnectionManager.isConnected()
+        connected.value = isConnected
+        if (!isConnected) {
             supportState.value = SupportState.NotConnected
             engineLabel.value = null
             // Drop the picker when the connection is gone; the button is hidden as well.
             pickerVisible.value = false
+        }
+        // A re-pair keeps the boolean true, so the timestamp event is the reliable success edge.
+        if (isPaired && (pairingSucceeded || !wasPaired)) {
+            // The service stops itself after a successful pair; the button must read "Start" if a
+            // later direct connect fails and brings it back.
+            pairingRunning.value = false
+            needsPairing.value = false
+            refreshHandler.removeCallbacks(pairingConnect)
+            refreshHandler.postDelayed(pairingConnect, CONNECT_AFTER_PAIR_DELAY_MS)
+            autoConnectTried = true
         }
         loadDeviceInfo()
     }
@@ -582,7 +646,7 @@ class MainActivity : AppCompatActivity() {
         exploitProgress.value = 0f
         commandMode.value = false
         // The log is its own tab: show it while the payload runs.
-        selectedTab.value = 1
+        selectedTab.value = 2
         Thread({
             // Resolving ksud scans /data/app over ADB: done once on this worker and shared by all
             // four engines, which also puts the scan itself in the log.
@@ -786,13 +850,17 @@ class MainActivity : AppCompatActivity() {
     private fun startPairing() {
         AdbPairingService.start(this)
         pairingRunning.value = true
+        refreshHandler.removeCallbacks(refreshTick)
+        refreshHandler.postDelayed(refreshTick, 1000)
     }
 
     private fun stopPairing() {
         AdbPairingService.stop(this)
-        pairingRunning.value = false
         refreshHandler.removeCallbacks(refreshTick)
-        refreshState()
+        // Set the UI state directly. Re-reading isRunning() here races the asynchronous
+        // stopService(): the old value would flip the button back to "Stop".
+        pairingRunning.value = false
+        refreshState(updatePairing = false)
     }
 
     private fun hasNotificationPermission(): Boolean =
